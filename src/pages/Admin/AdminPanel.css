@@ -189,6 +189,11 @@
   color: #64748b;
 }
 
+.role-badge.premium-player {
+  background: #f3e8ff;
+  color: #9333ea;
+}
+
 /* Modal Styles */
 .modal-overlay {
   position: fixed;

@@ -95,7 +95,7 @@ const Dashboard = () => {
         <div className="dashboard-actions" style={{marginBottom: '30px'}}>
           {user?.role === 'player' && !premiumRequests.some(r => r.status === 'pending') && (
             <button onClick={() => setShowRequestModal(true)} className="premium-request-button">
-              ⭐ Premium Üyelik Talebi
+              ⭐ Request Premium Membership
             </button>
           )}
           {premiumRequests.some(r => r.status === 'pending') && (
