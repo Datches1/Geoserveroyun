@@ -23,6 +23,21 @@ export const saveGameScore = async (req, res, next) => {
       });
     }
 
+    // Check for duplicate score submissions (within last 30 seconds)
+    const lastScore = await GameScore.findOne({
+      user: req.user.id,
+      createdAt: { $gte: new Date(Date.now() - 30000) } // Last 30 seconds
+    });
+
+    if (lastScore) {
+      console.log('⚠️ Duplicate score submission detected:', lastScore._id);
+      return res.status(200).json({
+        success: true,
+        data: lastScore,
+        message: 'Score already saved'
+      });
+    }
+
     // Create game score
     const gameScore = await GameScore.create({
       user: req.user.id,

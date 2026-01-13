@@ -19,6 +19,16 @@ connectDB();
 
 const app = express();
 
+// CORS Configuration - Must be first
+app.use(cors({
+  origin: [
+    'http://localhost:5173',
+    'https://geoserveroyun.vercel.app',
+    process.env.CORS_ORIGIN
+  ].filter(Boolean),
+  credentials: true,
+}));
+
 // Security Middleware
 app.use(helmet());
 
@@ -30,15 +40,10 @@ const limiter = rateLimit({
 });
 app.use('/api/', limiter);
 
-// CORS Configuration
-app.use(cors({
-  origin: [
-    'http://localhost:5173',
-    'https://geoserveroyun.vercel.app',
-    process.env.CORS_ORIGIN
-  ].filter(Boolean),
-  credentials: true,
-}));
+// Root Route
+app.get('/', (req, res) => {
+  res.json({ message: 'FamousGuessr API is running', env: process.env.NODE_ENV });
+});
 
 // Body Parser Middleware
 app.use(express.json());
