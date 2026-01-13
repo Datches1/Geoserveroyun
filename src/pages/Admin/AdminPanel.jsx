@@ -98,11 +98,11 @@ const AdminPanel = () => {
         status, 
         adminResponse: response 
       });
-      alert(`Premium talep ${status === 'approved' ? 'onaylandı' : 'reddedildi'}!`);
+      alert(`Premium request ${status === 'approved' ? 'approved' : 'rejected'}!`);
       loadData();
     } catch (error) {
       console.error('Error processing premium request:', error);
-      alert('Premium talep işlenemedi');
+      alert('Could not process premium request');
     }
   };
 
@@ -135,7 +135,7 @@ const AdminPanel = () => {
             className={`tab-btn ${activeTab === 'premium' ? 'active' : ''}`}
             onClick={() => setActiveTab('premium')}
           >
-            ⭐ Premium Talepleri ({premiumRequests.filter(r => r.status === 'pending').length})
+            ⭐ Premium Requests ({premiumRequests.filter(r => r.status === 'pending').length})
           </button>
         </div>
 
@@ -248,13 +248,13 @@ const AdminPanel = () => {
         {activeTab === 'premium' && (
           <div className="tab-content">
             <div className="content-header">
-              <h2>Premium Üyelik Talepleri</h2>
+              <h2>Premium Membership Requests</h2>
             </div>
 
             {loading ? (
               <p>Loading...</p>
             ) : premiumRequests.length === 0 ? (
-              <p className="empty-message">Henüz premium talebi yok</p>
+              <p className="empty-message">No premium requests yet</p>
             ) : (
               <div className="premium-requests-list">
                 {premiumRequests.map((request) => (
@@ -265,20 +265,20 @@ const AdminPanel = () => {
                         <p className="user-email">{request.user?.email}</p>
                       </div>
                       <span className={`status-badge ${request.status}`}>
-                        {request.status === 'pending' && '⏳ Beklemede'}
-                        {request.status === 'approved' && '✅ Onaylandı'}
-                        {request.status === 'rejected' && '❌ Reddedildi'}
+                        {request.status === 'pending' && '⏳ Pending'}
+                        {request.status === 'approved' && '✅ Approved'}
+                        {request.status === 'rejected' && '❌ Rejected'}
                       </span>
                     </div>
                     
                     {request.message && (
                       <div className="request-message">
-                        <strong>Mesaj:</strong> {request.message}
+                        <strong>Message:</strong> {request.message}
                       </div>
                     )}
                     
                     <div className="request-date">
-                      Talep Tarihi: {new Date(request.createdAt).toLocaleDateString('tr-TR')}
+                      Request Date: {new Date(request.createdAt).toLocaleDateString('en-US')}
                     </div>
                     
                     {request.status === 'pending' && (
@@ -287,13 +287,13 @@ const AdminPanel = () => {
                           className="approve-btn"
                           onClick={() => handlePremiumRequest(request._id, 'approved')}
                         >
-                          ✅ Onayla
+                          ✅ Approve
                         </button>
                         <button 
                           className="reject-btn"
                           onClick={() => handlePremiumRequest(request._id, 'rejected')}
                         >
-                          ❌ Reddet
+                          ❌ Reject
                         </button>
                       </div>
                     )}
