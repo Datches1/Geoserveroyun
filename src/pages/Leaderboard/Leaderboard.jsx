@@ -133,13 +133,13 @@ const Leaderboard = () => {
                   <div className="player-info">
                     <h3 className="player-name">{player.username}</h3>
                     <div className="player-stats-row">
-                      <span className="stat-item">
+                      <span className="leaderboard-stat-item">
                         🎮 {player.stats.gamesPlayed} games
                       </span>
-                      <span className="stat-item">
+                      <span className="leaderboard-stat-item">
                         ✅ {player.stats.correctAnswers} correct
                       </span>
-                      <span className="stat-item">
+                      <span className="leaderboard-stat-item">
                         📊 {player.stats.gamesPlayed > 0 
                           ? Math.round((player.stats.correctAnswers / (player.stats.correctAnswers + player.stats.wrongAnswers)) * 100) 
                           : 0}% accuracy
