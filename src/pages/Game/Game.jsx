@@ -46,10 +46,13 @@ const Game = () => {
   const tickCounterRef = useRef(0);
   const player1ScoreRef = useRef(0);
   const player2ScoreRef = useRef(0);
+  const scoreSavedRef = useRef(false);
 
   useEffect(() => {
     if (gameOver) {
       const saveScore = async () => {
+        if (scoreSavedRef.current) return;
+        
         // Don't save score for duo mode (multiplayer games don't affect leaderboard)
         if (difficulty === 'duo') {
           const p1 = player1ScoreRef.current;
@@ -68,6 +71,7 @@ const Game = () => {
         // Save game score to database if user is authenticated (only for solo modes)
         if (isAuthenticated && user) {
           try {
+            scoreSavedRef.current = true;
             const correctAnswersCount = correctlyAnsweredQuestions.length;
             const totalQuestions = questionCount;
             const timeSpentSeconds = difficulty === 'normal' ? 90 - timeLeft : 60 - timeLeft;
@@ -97,6 +101,7 @@ const Game = () => {
 
   const startGame = () => {
     console.log('Starting game... Difficulty:', difficulty);
+    scoreSavedRef.current = false;
     setGameStarted(true);
     setShowWelcomeModal(false);
     setScore(0);
