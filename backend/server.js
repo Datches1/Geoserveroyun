@@ -32,7 +32,11 @@ app.use('/api/', limiter);
 
 // CORS Configuration
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+  origin: [
+    'http://localhost:5173',
+    'https://geoserveroyun.vercel.app',
+    process.env.CORS_ORIGIN
+  ].filter(Boolean),
   credentials: true,
 }));
 
