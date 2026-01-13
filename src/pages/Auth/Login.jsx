@@ -93,7 +93,10 @@ const Login = () => {
           <p>
             <Link to="/">← Back to Home</Link>
           </p>
-        </div>      </div>    </div>
+        </div>
+      </div>
+    </div>
+  </div>
   );
 };
 
