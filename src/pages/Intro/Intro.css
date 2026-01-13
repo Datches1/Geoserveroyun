@@ -5,7 +5,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  /* background-image: url('../images/wallpaper.png'); */
+  background-image: url('/images/wallpaper.png');
   background-size: cover;
   background-position: center;
   position: relative;
