@@ -1,0 +1,113 @@
+config:
+  target: 'http://localhost:5000'
+  phases:
+    # Warm-up phase
+    - duration: 30
+      arrivalRate: 5
+      name: "Warm up"
+    
+    # Ramp up phase
+    - duration: 60
+      arrivalRate: 10
+      rampTo: 50
+      name: "Ramp up load"
+    
+    # Sustained load
+    - duration: 120
+      arrivalRate: 50
+      name: "Sustained load"
+    
+    # Spike test
+    - duration: 30
+      arrivalRate: 100
+      name: "Spike test"
+
+  processor: "./artillery-functions.js"
+
+scenarios:
+  # Test 1: Authentication endpoints
+  - name: "User Registration and Login"
+    weight: 30
+    flow:
+      - post:
+          url: "/api/auth/register"
+          json:
+            username: "testuser_{{ $randomString() }}"
+            email: "test_{{ $randomString() }}@example.com"
+            password: "testpass123"
+          capture:
+            - json: "$.data.token"
+              as: "authToken"
+      
+      - post:
+          url: "/api/auth/login"
+          json:
+            email: "test@example.com"
+            password: "testpass123"
+
+  # Test 2: Celebrity endpoints (Spatial queries - R-Tree index performance)
+  - name: "Celebrity Queries with Spatial Index"
+    weight: 40
+    flow:
+      - get:
+          url: "/api/celebrities?limit=50"
+      
+      - get:
+          url: "/api/celebrities/province/Istanbul"
+      
+      # Test spatial query (R-Tree index)
+      - get:
+          url: "/api/celebrities/nearby?lng=29.0086&lat=41.0225&distance=50000"
+      
+      - get:
+          url: "/api/celebrities?category=Actor&limit=20"
+
+  # Test 3: Game endpoints (with authentication)
+  - name: "Game Score Operations"
+    weight: 20
+    flow:
+      - post:
+          url: "/api/auth/login"
+          json:
+            email: "player@example.com"
+            password: "password123"
+          capture:
+            - json: "$.data.token"
+              as: "gameToken"
+      
+      - post:
+          url: "/api/games/score"
+          headers:
+            Authorization: "Bearer {{ gameToken }}"
+          json:
+            difficulty: "normal"
+            score: "{{ $randomNumber(0, 200) }}"
+            questionsAnswered: "{{ $randomNumber(5, 20) }}"
+            correctAnswers: "{{ $randomNumber(0, 20) }}"
+            timeSpent: 90
+      
+      - get:
+          url: "/api/games/leaderboard?limit=10"
+
+  # Test 4: Read-heavy workload (typical game usage)
+  - name: "Read-Heavy Game Session"
+    weight: 10
+    flow:
+      - get:
+          url: "/api/celebrities?limit=100"
+      
+      - get:
+          url: "/api/games/leaderboard?difficulty=normal&limit=20"
+      
+      - think: 2
+      
+      - get:
+          url: "/api/celebrities?category=Actor"
+
+# Performance expectations
+expect:
+  maxErrorRate: 1  # Max 1% error rate
+  
+ensure:
+  p95: 500  # 95% of requests should complete within 500ms
+  p99: 1000 # 99% of requests should complete within 1s
