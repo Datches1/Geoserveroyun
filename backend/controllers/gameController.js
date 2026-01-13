@@ -80,6 +80,9 @@ export const getMyScores = async (req, res, next) => {
       .sort({ createdAt: -1 })
       .limit(parseInt(limit) || 10);
 
+    // Prevent caching
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+
     res.json({
       success: true,
       count: scores.length,
@@ -108,6 +111,9 @@ export const getLeaderboard = async (req, res, next) => {
       .sort({ score: -1 })
       .limit(parseInt(limit) || 10)
       .populate('user', 'username stats');
+
+    // Prevent caching
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
 
     res.json({
       success: true,
@@ -141,6 +147,9 @@ export const getGameStats = async (req, res, next) => {
         },
       },
     ]);
+
+    // Prevent caching
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
 
     res.json({
       success: true,
