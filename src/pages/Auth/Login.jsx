@@ -93,14 +93,7 @@ const Login = () => {
           <p>
             <Link to="/">← Back to Home</Link>
           </p>
-        </div>
-
-        <div className="demo-credentials">
-          <p><strong>Demo Accounts:</strong></p>
-          <p>Admin: admin@geogame.com / admin123</p>
-          <p>Player: player@example.com / password123</p>
-        </div>        </div>      </div>
-    </div>
+        </div>      </div>    </div>
   );
 };
 
