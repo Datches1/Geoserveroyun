@@ -99,18 +99,58 @@ export const getMyScores = async (req, res, next) => {
 export const getLeaderboard = async (req, res, next) => {
   try {
     const { difficulty, limit } = req.query;
+    const limitNum = parseInt(limit) || 50;
 
-    let query = {};
-
+    let matchStage = {};
     if (difficulty) {
-      query.difficulty = difficulty;
+      matchStage.difficulty = difficulty;
     }
 
-    // Get top scores with user info
-    const topScores = await GameScore.find(query)
-      .sort({ score: -1 })
-      .limit(parseInt(limit) || 10)
-      .populate('user', 'username stats');
+    // Aggregation pipeline to get unique user high scores
+    const topScores = await GameScore.aggregate([
+      // 1. Filter by difficulty if provided
+      { $match: matchStage },
+
+      // 2. Group by user and find max score
+      {
+        $group: {
+          _id: '$user',
+          highScore: { $max: '$score' }, // Get highest score
+          latestGame: { $last: '$createdAt' } // Keep track of recency
+        }
+      },
+
+      // 3. Sort by high score descending
+      { $sort: { highScore: -1 } },
+
+      // 4. Limit results
+      { $limit: limitNum },
+
+      // 5. Populate user details
+      {
+        $lookup: {
+          from: 'users',
+          localField: '_id',
+          foreignField: '_id',
+          as: 'userDetails'
+        }
+      },
+
+      // 6. Unwind user array
+      { $unwind: '$userDetails' },
+
+      // 7. Project final shape to match frontend expectations
+      {
+        $project: {
+          score: '$highScore',
+          user: {
+            _id: '$userDetails._id',
+            username: '$userDetails.username',
+            stats: '$userDetails.stats' // Include user stats like total games
+          }
+        }
+      }
+    ]);
 
     // Prevent caching
     res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
