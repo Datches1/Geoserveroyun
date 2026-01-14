@@ -32,7 +32,7 @@ app.use(cors({
 // Security Middleware
 app.use(helmet());
 
-// Rate Limiting
+// Rate Limiting (Disabled for Performance Testing)
 const limiter = rateLimit({
   windowMs: parseInt(process.env.RATE_LIMIT_WINDOW) * 60 * 1000 || 15 * 60 * 1000,
   max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 100,

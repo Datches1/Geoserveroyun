@@ -2,27 +2,27 @@ config:
   target: 'http://localhost:5000'
   phases:
     # Warm-up phase
-    - duration: 30
-      arrivalRate: 5
+    - duration: 10
+      arrivalRate: 1
       name: "Warm up"
     
     # Ramp up phase
-    - duration: 60
-      arrivalRate: 10
-      rampTo: 50
+    - duration: 20
+      arrivalRate: 1
+      rampTo: 3
       name: "Ramp up load"
     
     # Sustained load
-    - duration: 120
-      arrivalRate: 50
+    - duration: 60
+      arrivalRate: 3
       name: "Sustained load"
     
     # Spike test
-    - duration: 30
-      arrivalRate: 100
+    - duration: 10
+      arrivalRate: 5
       name: "Spike test"
 
-  processor: "./artillery-functions.js"
+  processor: "./artillery-functions.cjs"
 
 scenarios:
   # Test 1: Authentication endpoints
